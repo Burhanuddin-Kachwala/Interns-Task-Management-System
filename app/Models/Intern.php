@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+
 /**
  * App\Models\Intern
  *
@@ -33,5 +34,14 @@ class Intern extends Authenticatable
     public function comments()
     {
         return $this->hasMany(TaskComment::class);
+    }
+    public function hasPermission($slug)
+    {
+        return $this->role && $this->role->permissions()->where('slug', $slug)->exists();
+    }
+
+    public function hasRole($slug)
+    {
+        return $this->role && $this->role->slug === $slug;
     }
 }

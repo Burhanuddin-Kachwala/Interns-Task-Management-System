@@ -29,4 +29,19 @@ class Admin extends Authenticatable
     {
         return $this->hasMany(TaskComment::class);
     }
+    public function isSuperAdmin() {
+        return $this->role->is_super_admin == Role::STATUS_YES ? true : false;
+    }
+    public function hasPermission($slug)
+    {
+        if($this->isSuperAdmin()) {
+            return true;
+        }
+        return $this->role && $this->role->permissions()->where('slug', $slug)->exists();
+    }
+
+    public function hasRole($slug)
+    {
+        return $this->role && $this->role->slug === $slug;
+    }
 }

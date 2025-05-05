@@ -24,6 +24,10 @@
                     @csrf
                     <button class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 text-sm" type="submit">Logout</button>
                 </form>
+                <form method="get" action="{{ route('intern.chat') }}">
+                   
+                    <button class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 text-sm" type="submit">Chat</button>
+                </form>
             </div>
         @endauth
     </header>

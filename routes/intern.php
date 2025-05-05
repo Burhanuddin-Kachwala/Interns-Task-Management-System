@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Chat\ChatController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Intern\InternController;
 use App\Http\Controllers\Intern\TaskController;
@@ -11,6 +12,11 @@ Route::prefix('intern')->group(function () {
         Route::get('/tasks', [TaskController::class, 'index'])->name('intern.tasks.index');
         Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('intern.tasks.show');
         Route::post('/tasks/{task}/comment', [TaskController::class, 'storeComment'])->name('intern.tasks.comment');
+
+        Route::get('/chat', [ChatController::class, 'internView'])->name('intern.chat');
+// Intern's chat route to send a message
+Route::post('/chat/send/{intern_id}', [ChatController::class, 'send'])->name('intern.chat.send');
+       
     });
 
     Route::middleware(['guest:intern'])->group(function () {

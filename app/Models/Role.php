@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Role extends Model
 {
     use SoftDeletes;
+    const STATUS_YES = "yes";
+    const STATUS_NO =   "no";
 
     protected $fillable = ['name', 'slug', 'is_superadmin'];
 
@@ -25,4 +27,5 @@ class Role extends Model
     {
         return $this->hasMany(Intern::class);
     }
+   
 }

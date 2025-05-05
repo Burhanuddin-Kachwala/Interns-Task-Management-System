@@ -77,7 +77,7 @@ class InternController extends Controller
     // Handle the logout
     public function logout()
     {
-        Auth::logout();
+        Auth::guard('intern')->logout();
         return redirect()->route('intern.login');
     }
 }
