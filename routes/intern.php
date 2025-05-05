@@ -11,8 +11,8 @@ Route::prefix('intern')->group(function () {
 
     Route::middleware(['guest:intern'])->group(function () {
         Route::get('/register', [InternController::class, 'showRegistrationForm'])->name('intern.register');
-        Route::post('/register', [InternController::class, 'register']);
+        Route::post('/register', [InternController::class, 'register'])->name('intern.register.submit');
         Route::get('/login', [InternController::class, 'showLoginForm'])->name('intern.login');
-        Route::post('/login', [InternController::class, 'login']);
+        Route::post('/login', [InternController::class, 'login'])->name('intern.login.submit');
     });
 });
