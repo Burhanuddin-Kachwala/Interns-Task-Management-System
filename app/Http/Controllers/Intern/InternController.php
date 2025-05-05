@@ -35,7 +35,9 @@ class InternController extends Controller
         ]);
 
       
-        Auth::login($intern);
+        
+        Auth::guard('intern')
+            ->login($intern);
 
         return redirect()->route('intern.dashboard');
     }
@@ -54,7 +56,7 @@ class InternController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        if (Auth::guard('intern')->attempt(['email' => $request->email, 'password' => $request->password])) {
             return redirect()->route('intern.dashboard');
         }
 
@@ -66,8 +68,7 @@ class InternController extends Controller
     // Intern dashboard after successful login
     public function dashboard()
     {
-        dd(Auth::intern());
-        return view('intern.dashboard');
+          return view('intern.dashboard');
     }
 
     // Handle the logout
