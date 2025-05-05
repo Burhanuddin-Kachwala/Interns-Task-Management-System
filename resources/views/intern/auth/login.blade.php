@@ -20,12 +20,12 @@
                         value="Test@123">
                 </div>
 
-                <div class="flex justify-between items-center mb-4">
+                {{-- <div class="flex justify-between items-center mb-4">
                     <label class="flex items-center">
                         <input type="checkbox" name="remember" class="mr-2">
                         <span class="text-sm text-gray-600">Remember me</span>
                     </label>
-                </div>
+                </div> --}}
 
                 <button type="submit"
                     class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">

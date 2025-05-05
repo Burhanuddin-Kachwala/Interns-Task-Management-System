@@ -68,7 +68,10 @@ class InternController extends Controller
     // Intern dashboard after successful login
     public function dashboard()
     {
-          return view('intern.dashboard');
+        $intern = Auth::guard('intern')->user();
+        $tasks = $intern->tasks()->with('comments.intern')->get();
+    
+        return view('intern.dashboard', compact('tasks'));
     }
 
     // Handle the logout
