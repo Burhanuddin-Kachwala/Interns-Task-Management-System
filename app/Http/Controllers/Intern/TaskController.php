@@ -1,13 +1,11 @@
 <?php
 
-// app/Http/Controllers/Intern/TaskController.php
 
 namespace App\Http\Controllers\Intern;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Task;
-use App\Models\TaskComment;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -24,7 +22,8 @@ class TaskController extends Controller
 
         $comments = $task->comments()
             ->with('intern')
-            ->where('intern_id', Auth::guard('intern')->id())
+            // ->where('intern_id', Auth::guard('intern')->id())
+            //if you want to show the comments only based on the particular user then uncomment it
             ->latest()
             ->get();
         return view('intern.tasks.show', compact('task', 'comments'));
