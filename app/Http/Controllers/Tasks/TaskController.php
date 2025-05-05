@@ -2,64 +2,80 @@
 
 namespace App\Http\Controllers\Tasks;
 
-use App\Http\Controllers\Controller;
+use App\Models\Task;
+use App\Models\Intern;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $tasks = Task::with('interns')->latest()->get();
+        return view('admin.tasks.index', compact('tasks'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $interns = Intern::all();
+        return view('admin.tasks.create', compact('interns'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'deadline'    => 'required|date',
+            'interns'     => 'nullable|array',
+            'interns.*'   => 'exists:interns,id',
+        ]);
+
+        $task = Task::create([
+            'title'       => $request->title,
+            'slug'        => Str::slug($request->title) . '-' . Str::random(5),
+            'description' => $request->description,
+            'admin_id'    => auth('admin')->id(),
+            'deadline'    => $request->deadline,
+        ]);
+
+        $task->interns()->sync($request->interns ?? []);
+
+        return redirect()->route('admin.tasks.index')->with('success', 'Task created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Task $task)
     {
-        //
+        $interns = Intern::all();
+        $assignedInterns = $task->interns->pluck('id')->toArray();
+        return view('admin.tasks.edit', compact('task', 'interns', 'assignedInterns'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Task $task)
     {
-        //
+        $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'deadline'    => 'required|date',
+            'interns'     => 'nullable|array',
+            'interns.*'   => 'exists:interns,id',
+        ]);
+
+        $task->update([
+            'title'       => $request->title,
+            'description' => $request->description,
+            'deadline'    => $request->deadline,
+        ]);
+
+        $task->interns()->sync($request->interns ?? []);
+
+        return redirect()->route('admin.tasks.index')->with('success', 'Task updated successfully.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Task $task)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $task->delete();
+        return back()->with('success', 'Task deleted.');
     }
 }

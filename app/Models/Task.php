@@ -9,7 +9,7 @@ class Task extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['title', 'slug', 'description', 'admin_id'];
+    protected $fillable = ['title', 'slug', 'description', 'admin_id','deadline'];
 
     public function admin()
     {
