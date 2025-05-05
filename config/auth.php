@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        // New guard for interns
+        'intern' => [
+            'driver' => 'session',
+            'provider' => 'interns',
+        ],
     ],
 
     /*
@@ -65,10 +70,11 @@ return [
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        // Add this
+        'interns' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Intern::class,
+        ],
     ],
 
     /*
