@@ -1,6 +1,6 @@
 <x-layout>
     <h1 class="text-2xl font-bold mb-4">{{ $task->title }}</h1>
-    <p class="mb-2 text-gray-700">{{ $task->description }}</p>
+    <p class="mb-2 text-gray-700">{!! $task->description!!}</p>
     <p class="text-sm text-gray-600 mb-4">Deadline: {{ $task->deadline }}</p>
 
     <hr class="my-4">

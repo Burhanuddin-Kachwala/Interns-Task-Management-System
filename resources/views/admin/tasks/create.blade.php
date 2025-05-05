@@ -10,7 +10,7 @@
 
         <div>
             <label class="block font-medium">Description</label>
-            <textarea name="description" class="w-full px-4 py-2 border rounded"></textarea>
+            <textarea name="description" class="w-full px-4 py-2 border rounded summernote"></textarea>
         </div>
 
         <div>

@@ -19,7 +19,7 @@
                     <div class="p-4 border border-gray-200 rounded bg-gray-50 hover:bg-gray-100 transition duration-150 ease-in-out">
                         <h2 class="text-lg font-semibold text-purple-700">{{ $task->title }}</h2>
                         <p class="text-sm text-gray-600">Deadline: {{ $task->deadline }}</p>
-                        <p class="mt-2 text-gray-800 truncate">{{ $task->description }}</p>
+                        <p class="mt-2 text-gray-800 truncate">{!! $task->description !!}</p>
                         <div class="mt-3 text-indigo-600 text-sm">
                             Click to view details →
                         </div>
