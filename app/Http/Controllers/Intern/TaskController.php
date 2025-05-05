@@ -22,7 +22,11 @@ class TaskController extends Controller
     {
         $this->authorizeTask($task);
 
-        $comments = $task->comments()->with('intern')->latest()->get();
+        $comments = $task->comments()
+            ->with('intern')
+            ->where('intern_id', Auth::guard('intern')->id())
+            ->latest()
+            ->get();
         return view('intern.tasks.show', compact('task', 'comments'));
     }
 

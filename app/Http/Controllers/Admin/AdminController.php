@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\TaskComment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,7 +33,8 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-         return view('admin.dashboard');
+        $recentComments = TaskComment::with(['intern', 'task'])->latest()->take(5)->get();  
+         return view('admin.dashboard',compact('recentComments'));
     }
 
     public function logout(Request $request)
