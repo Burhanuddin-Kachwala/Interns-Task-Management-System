@@ -19,6 +19,10 @@
                         <h2 class="text-lg font-bold text-green-700">Manage Interns</h2>
                         <p class="text-sm text-gray-600">List, review, or edit intern profiles.</p>
                     </a>
+                    <a href="{{ route('admin.roles.index') }}" class="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded hover:shadow">
+                        <h2 class="text-lg font-bold text-yellow-700">Manage Roles</h2>
+                        <p class="text-sm text-gray-600">View, create, assign, or update Roles.</p>
+                    </a>
                 </div>
             </div>
         </div>
