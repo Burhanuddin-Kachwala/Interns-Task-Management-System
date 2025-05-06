@@ -29,15 +29,12 @@ class Admin extends Authenticatable
     {
         return $this->hasMany(TaskComment::class);
     }
-    public function isSuperAdmin() {
-        return $this->role->is_super_admin == Role::STATUS_YES ? true : false;
-    }
-    public function hasPermission($slug)
+    public function hasPermission($permissionName)
     {
-        if($this->isSuperAdmin()) {
-            return true;
+        if ($this->role && $this->role->is_superadmin) {
+            return true; 
         }
-        return $this->role && $this->role->permissions()->where('slug', $slug)->exists();
+        return $this->role && $this->role->permissions->contains('slug', $permissionName);
     }
 
     public function hasRole($slug)

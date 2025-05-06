@@ -7,6 +7,7 @@ use App\Http\Controllers\Tasks\TaskController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\InternController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\AdminUserController;
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
@@ -25,6 +26,7 @@ Route::prefix('admin')->group(function () {
             'update' => 'admin.tasks.update',
             'destroy' => 'admin.tasks.destroy'
         ]);
+
         Route::resource('interns', InternController::class)->names([
             'index' => 'admin.interns.index',
             'create' => 'admin.interns.create',
@@ -40,7 +42,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/', [ChatController::class, 'index'])->name('admin.chat.index');
             Route::get('/with/{internId}', [ChatController::class, 'show'])->name('admin.chat.show');
             Route::post('/send/{internId}', [ChatController::class, 'send'])->name('admin.chat.send');
-        });
+        })->middleware('can:chat');
 
 
         Route::resource('roles', RoleController::class)->names([
@@ -51,7 +53,8 @@ Route::prefix('admin')->group(function () {
             'edit' => 'admin.roles.edit',
             'update' => 'admin.roles.update',
             'destroy' => 'admin.roles.destroy'
-        ]);
+        ])->middleware('can:manage-roles');
+
         Route::resource('permissions', PermissionController::class)->names([
             'index' => 'admin.permissions.index',
             'create' => 'admin.permissions.create',
@@ -60,6 +63,8 @@ Route::prefix('admin')->group(function () {
             'edit' => 'admin.permissions.edit',
             'update' => 'admin.permissions.update',
             'destroy' => 'admin.permissions.destroy'
-        ]);
+        ])->middleware('can:manage-permissions');
+
+        Route::resource('admin-users',AdminUserController::class)->middleware('can:manage-admin');
     });
 });
