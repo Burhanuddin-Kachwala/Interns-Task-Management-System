@@ -33,7 +33,6 @@ class ChatController extends Controller
             $admin->id,
             'admin'
         );
-
         return view('intern.chat.chatbox', compact('admin', 'intern', 'messages'));
     }
 
