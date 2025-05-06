@@ -2,45 +2,56 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Intern;
-use App\Models\Message;
+use App\Services\ChatService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
+    protected $chatService;
+
+    public function __construct(ChatService $chatService)
+    {
+        $this->chatService = $chatService;
+    }
+
     public function index()
     {
+        // List of all interns the admin can chat with
         $interns = Intern::all();
         return view('admin.chat.index', compact('interns'));
     }
 
     public function show($internId)
     {
+        $admin = Auth::guard('admin')->user();
         $intern = Intern::findOrFail($internId);
-        $messages = Message::where(function ($query) use ($internId) {
-            $query->where('sender_id', auth()->id())
-                  ->where('receiver_id', $internId);
-        })->orWhere(function ($query) use ($internId) {
-            $query->where('sender_id', $internId)
-                  ->where('receiver_id', auth()->id());
-        })->orderBy('created_at')->get();
-    
-        return view('admin.chat.chatbox', compact('messages', 'intern'));
+
+        $messages = $this->chatService->getConversation(
+            $admin->id,
+            'admin',
+            $internId,
+            'intern'
+        );
+
+        return view('admin.chat.chatbox', compact('admin', 'intern', 'messages'));
     }
-    
 
     public function send(Request $request, $internId)
     {
-        $request->validate(['message' => 'required']);
+        $request->validate(['message' => 'required|string']);
 
-        Message::create([
-            'sender_id' => auth()->guard('admin')->id(),
-            'sender_type' => 'admin',
-            'receiver_id' => $internId,
-            'receiver_type' => 'intern',
-            'message' => $request->message,
-        ]);
+        $admin = Auth::guard('admin')->user();
 
-        return back();
+        $this->chatService->sendMessage(
+            $admin->id,
+            'admin',
+            $internId,
+            'intern',
+            $request->message
+        );
+
+        return redirect()->back()->with('success', 'Message sent!');
     }
 }

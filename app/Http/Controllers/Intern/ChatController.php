@@ -6,9 +6,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin;
 use App\Models\Message;
+use App\Services\ChatService;
 
 class ChatController extends Controller
 {
+    protected $chatService;
+
+    public function __construct(ChatService $chatService)
+    {
+        $this->chatService = $chatService;
+    }
     public function index()
     {
         $admins = Admin::all();
@@ -17,31 +24,36 @@ class ChatController extends Controller
 
     public function show($adminId)
     {
+        $intern = auth()->guard('intern')->user();
         $admin = Admin::findOrFail($adminId);
-        $messages = Message::where(function ($query) use ($adminId) {
-            $query->where('sender_id', auth()->id())
-                  ->where('receiver_id', $adminId);
-        })->orWhere(function ($query) use ($adminId) {
-            $query->where('sender_id', $adminId)
-                  ->where('receiver_id', auth()->id());
-        })->orderBy('created_at')->get();
-    
-        return view('intern.chat.chatbox', compact('messages', 'admin'));
+
+        $messages = $this->chatService->getConversation(
+            $intern->id,
+            'intern',
+            $admin->id,
+            'admin'
+        );
+
+        return view('intern.chat.chatbox', compact('admin', 'intern', 'messages'));
     }
-    
+
 
     public function send(Request $request, $adminId)
-    {
-        $request->validate(['message' => 'required']);
+{
+    $request->validate([
+        'message' => 'required|string',
+    ]);
 
-        Message::create([
-            'sender_id' => auth()->guard('intern')->id(),
-            'sender_type' => 'intern',
-            'receiver_id' => $adminId,
-            'receiver_type' => 'admin',
-            'message' => $request->message,
-        ]);
+    $intern = auth()->guard('intern')->user();
 
-        return back();
-    }
+    $this->chatService->sendMessage(
+        $intern->id,
+        'intern',
+        $adminId,
+        'admin',
+        $request->message
+    );
+
+    return redirect()->back();
+}
 }
