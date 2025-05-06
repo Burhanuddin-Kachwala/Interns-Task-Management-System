@@ -1,8 +1,10 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Tasks\TaskController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\InternController;
+use App\Http\Controllers\Admin\ChatController;
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
@@ -22,12 +24,19 @@ Route::prefix('admin')->group(function () {
         ]);
         Route::resource('interns', InternController::class)->names([
             'index' => 'admin.interns.index',
-            'create' => 'admin.interns.create', 
+            'create' => 'admin.interns.create',
             'store' => 'admin.interns.store',
             'show' => 'admin.interns.show',
             'edit' => 'admin.interns.edit',
             'update' => 'admin.interns.update',
             'destroy' => 'admin.interns.destroy'
         ]);
+
+        // Admin Chat Routes
+        Route::prefix('chat')->group(function () {
+            Route::get('/', [ChatController::class, 'index'])->name('admin.chat.index');
+            Route::get('/with/{internId}', [ChatController::class, 'show'])->name('admin.chat.show');
+            Route::post('/send/{internId}', [ChatController::class, 'send'])->name('admin.chat.send');
+        });
     });
 });

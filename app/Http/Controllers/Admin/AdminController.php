@@ -22,7 +22,6 @@ class AdminController extends Controller
         ]);
 
         if (Auth::guard('admin')->attempt($credentials)) {
-            //$request->session()->regenerate();
             return redirect(route('admin.dashboard'));
         }
 
@@ -33,8 +32,8 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        $recentComments = TaskComment::with(['intern', 'task'])->latest()->take(5)->get();  
-         return view('admin.dashboard',compact('recentComments'));
+        $recentComments = TaskComment::with(['intern', 'task'])->latest()->take(5)->get();
+        return view('admin.dashboard', compact('recentComments'));
     }
 
     public function logout(Request $request)
@@ -42,7 +41,7 @@ class AdminController extends Controller
         Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
+
         return redirect()->route('admin.login');
     }
 }
