@@ -14,11 +14,23 @@
                         <h2 class="text-lg font-bold text-indigo-700">Manage Tasks</h2>
                         <p class="text-sm text-gray-600">View, create, assign, or update tasks.</p>
                     </a>
-
+                    
                     <a href="{{ route('admin.interns.index') }}" class="bg-green-100 border-l-4 border-green-500 p-4 rounded hover:shadow">
                         <h2 class="text-lg font-bold text-green-700">Manage Interns</h2>
                         <p class="text-sm text-gray-600">List, review, or edit intern profiles.</p>
                     </a>
+                    @can('manage-roles')
+                    <a href="{{ route('admin.roles.index') }}" class="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded hover:shadow">
+                        <h2 class="text-lg font-bold text-yellow-700">Manage Roles</h2>
+                        <p class="text-sm text-gray-600">View, create, assign, or update Roles.</p>
+                    </a>
+                    @endcan
+                    @can('manage-admin')
+                    <a href="{{ route('admin-users.index') }}" class="bg-red-100 border-l-4 border-red-500 p-4 rounded hover:shadow">
+                        <h2 class="text-lg font-bold text-red-700">Manage Admins</h2>
+                        <p class="text-sm text-gray-600">View, create, assign, or update Admin.</p>
+                    </a>
+                    @endcan
                 </div>
             </div>
         </div>
