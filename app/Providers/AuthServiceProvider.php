@@ -1,14 +1,7 @@
 <?php
 
 namespace App\Providers;
-
-use App\Models\Admin;
-use App\Models\Intern;
-use App\Models\Permission;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider

@@ -25,7 +25,7 @@ Route::prefix('admin')->group(function () {
             'edit' => 'admin.tasks.edit',
             'update' => 'admin.tasks.update',
             'destroy' => 'admin.tasks.destroy'
-        ]);
+        ])->middleware('can:manage-tasks');
 
         Route::resource('interns', InternController::class)->names([
             'index' => 'admin.interns.index',
@@ -35,7 +35,7 @@ Route::prefix('admin')->group(function () {
             'edit' => 'admin.interns.edit',
             'update' => 'admin.interns.update',
             'destroy' => 'admin.interns.destroy'
-        ]);
+        ])->middleware('can:manage-interns');
 
         // Admin Chat Routes
         Route::prefix('chat')->group(function () {

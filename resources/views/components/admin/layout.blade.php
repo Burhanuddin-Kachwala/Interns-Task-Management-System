@@ -22,6 +22,11 @@
         @auth
             <div class="flex items-center space-x-4">
                 <span class="text-sm font-medium text-gray-600">Hello, {{ Auth::guard('admin')->user()->name ?? 'Admin User' }}</span>
+                @can('chat')
+                <a href="{{ route('admin.chat.index') }}" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-sm">
+                    Chat
+                </a>
+                @endcan
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
                     <button class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 text-sm" type="submit">Logout</button>
