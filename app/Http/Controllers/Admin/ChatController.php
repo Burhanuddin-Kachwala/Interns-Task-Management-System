@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
+use App\Events\NewChatMessage;
 use App\Http\Controllers\Controller;
 use App\Models\Intern;
 use App\Services\ChatService;
@@ -38,20 +39,24 @@ class ChatController extends Controller
         return view('admin.chat.chatbox', compact('admin', 'intern', 'messages'));
     }
 
-    public function send(Request $request, $internId)
-    {
-        $request->validate(['message' => 'required|string']);
+   public function send(Request $request, $internId)
+{
+    $request->validate(['message' => 'required|string']);
 
-        $admin = Auth::guard('admin')->user();
+    $admin = Auth::guard('admin')->user();
 
-        $this->chatService->sendMessage(
-            $admin->id,
-            'admin',
-            $internId,
-            'intern',
-            $request->message
-        );
+    $message = $this->chatService->sendMessage(
+        $admin->id,
+        'admin',
+        $internId,
+        'intern',
+        $request->message
+    );
 
-        return redirect()->back()->with('success', 'Message sent!');
-    }
+    // Broadcast the new message
+    event(new NewChatMessage($message, $internId, 'intern'));
+
+    // Return the new message as JSON
+    return response()->json(['message' => $message]);
+}
 }

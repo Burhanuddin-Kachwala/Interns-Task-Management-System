@@ -73,8 +73,6 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
-
-        // Add this
         'interns' => [
             'driver' => 'eloquent',
             'model' => App\Models\Intern::class,

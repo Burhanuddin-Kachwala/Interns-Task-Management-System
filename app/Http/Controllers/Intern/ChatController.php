@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Intern;
 
+use App\Events\NewChatMessage;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin;
@@ -38,21 +39,25 @@ class ChatController extends Controller
 
 
     public function send(Request $request, $adminId)
-{
-    $request->validate([
-        'message' => 'required|string',
-    ]);
-
-    $intern = auth()->guard('intern')->user();
-
-    $this->chatService->sendMessage(
-        $intern->id,
-        'intern',
-        $adminId,
-        'admin',
-        $request->message
-    );
-
-    return redirect()->back();
-}
+    {
+        $request->validate([
+            'message' => 'required|string',
+        ]);
+    
+        $intern = auth()->guard('intern')->user();
+    
+        $message = $this->chatService->sendMessage(
+            $intern->id,
+            'intern',
+            $adminId,
+            'admin',
+            $request->message
+        );
+    
+        // Broadcast the new message to the admin's channel
+        event(new NewChatMessage($message, $adminId, 'admin'));
+    
+        // Return the new message as JSON
+        return response()->json(['message' => $message]);
+    }
 }
