@@ -42,32 +42,44 @@ class AdminUserController extends Controller
         return redirect()->route('admin-users.index')->with('success', 'Admin created successfully.');
     }
 
-    public function edit(Admin $admin)
+    public function edit(Admin $admin_user)
     {
+        $admin = $admin_user;
         $roles = Role::all();
         return view('admin.admins.edit', compact('admin', 'roles'));
     }
 
-    public function update(Request $request, Admin $admin)
+    public function update(Request $request, Admin $admin_user)
     {
+        // Validate request
         $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:admins,email,' . $admin->id,
-            'role_id' => 'required|exists:roles,id',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email',
+            'role_id'  => 'required|exists:roles,id',
+            'password' => 'nullable|confirmed|min:6',
         ]);
-
-        $admin->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role_id' => $request->role_id,
-        ]);
-
+    
+        // Prepare update data
+        $updateData = [
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'role_id'   => $request->role_id,
+            'is_active' => $request->has('is_active'), // true if checked, false otherwise
+        ];
+    
+        // Add password if provided
         if ($request->filled('password')) {
-            $admin->update(['password' => Hash::make($request->password)]);
+            $updateData['password'] = \Hash::make($request->password);
         }
+    
+       
 
-        return redirect()->route('admin-users.index')->with('success', 'Admin updated.');
+        $admin_user->update($updateData);
+    
+        return redirect()->route('admin-users.index')->with('success', 'Admin updated successfully.');
     }
+    
+    
 
     public function destroy(Admin $admin)
     {

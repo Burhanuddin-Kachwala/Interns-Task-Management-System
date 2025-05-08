@@ -3,7 +3,7 @@
         <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
             <h2 class="text-3xl font-bold text-center text-blue-600 mb-6">Intern Login</h2>
 
-            <form method="POST" action="{{ route('intern.login.submit') }}">
+            <form method="POST" action="{{ route('intern.login.submit') }}" id="intern_login_form">                
                 @csrf
 
                 <div class="mb-4">

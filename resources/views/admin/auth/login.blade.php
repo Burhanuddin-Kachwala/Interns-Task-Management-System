@@ -3,7 +3,7 @@
         <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
             <h2 class="text-3xl font-bold text-center text-red-600 mb-6">Admin Login</h2>
 
-            <form method="POST" action="{{ route('admin.login.submit') }}">
+            <form id="admin_login_form" method="POST" action="{{ route('admin.login.submit') }}">
                 @csrf
 
                 <div class="mb-4">
@@ -29,7 +29,7 @@
 
                 <button type="submit"
                     class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                   Admin Login
+                    Admin Login
                 </button>
 
                 {{-- <p class="text-sm text-center mt-4 text-gray-600">

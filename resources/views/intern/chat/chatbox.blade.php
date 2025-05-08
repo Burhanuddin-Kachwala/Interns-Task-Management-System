@@ -16,7 +16,7 @@
             @endforeach
         </div>
 
-        <form method="POST" action="{{ route('intern.chat.send', $admin->id) }}" class="flex space-x-2 message-form">
+        <form id="intern_chat_box" method="POST" action="{{ route('intern.chat.send', $admin->id) }}" class="flex space-x-2 message-form">
             @csrf
             <input type="text" name="message" class="w-full border rounded px-3 py-2 message-input"
                 placeholder="Type your message...">

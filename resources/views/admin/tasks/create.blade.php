@@ -1,7 +1,7 @@
 <x-admin.layout>
     <h2 class="text-2xl font-bold text-indigo-600 mb-6">Create Task</h2>
 
-    <form action="{{ route('admin.tasks.store') }}" method="POST" class="space-y-4">
+    <form id="admin_create_task" action="{{ route('admin.tasks.store') }}" method="POST" class="space-y-4">
         @csrf
         <div>
             <label class="block font-medium">Title</label>

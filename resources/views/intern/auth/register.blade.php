@@ -3,7 +3,7 @@
         <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
             <h2 class="text-3xl font-bold text-center text-green-600 mb-6">Intern Register</h2>
 
-            <form method="POST" action="{{ route('intern.register.submit) }}">
+            <form method="POST" action="{{ route('intern.register.submit') }}" id="intern_register_form">
                 @csrf
 
                 <div class="mb-4">
@@ -20,7 +20,7 @@
 
                 <div class="mb-4">
                     <label for="password" class="block text-sm font-semibold text-gray-700">Password</label>
-                    <input type="password" name="password" id="password" required
+                    <input type="password" name="password" id="password" required id="password"
                         class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400">
                 </div>
 

@@ -1,7 +1,7 @@
 <x-admin.layout>
     <h1 class="text-2xl font-bold mb-4">Create Role</h1>
 
-    <form method="POST" action="{{ route('admin.roles.store') }}">
+    <form id="admin_create_role" method="POST" action="{{ route('admin.roles.store') }}">
         @csrf
         
         <div>

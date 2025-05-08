@@ -1,7 +1,7 @@
 <x-admin.layout>
     <h2 class="text-2xl font-bold text-indigo-600 mb-6">Edit Task</h2>
 
-    <form action="{{ route('admin.tasks.update', $task->id) }}" method="POST" class="space-y-4">
+    <form id="admin_edit_task" action="{{ route('admin.tasks.update', $task->id) }}" method="POST" class="space-y-4">
         @csrf
         @method('PUT')
 

@@ -31,7 +31,7 @@ class NewChatMessage implements ShouldBroadcast
     {
 
         $channelname="chat.{$this->receiverType}.{$this->receiverId}";
-        Log::info("Broadcasting on channel smit: {$channelname}");
+        Log::info("Broadcasting on channel: {$channelname}");
         return new PrivateChannel("chat.{$this->receiverType}.{$this->receiverId}");
     }
 

@@ -14,7 +14,7 @@
         </div>
     @endforeach
 
-    <form action="{{ route('intern.tasks.comment', $task) }}" method="POST" class="mt-4">
+    <form id="intern_comment_form" action="{{ route('intern.tasks.comment', $task) }}" method="POST" class="mt-4" >
         @csrf
         <textarea name="comment" rows="3" required class="w-full p-2 border rounded" placeholder="Add a comment..."></textarea>
         <button type="submit" class="mt-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Comment</button>

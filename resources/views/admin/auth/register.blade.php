@@ -3,7 +3,7 @@
         <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
             <h2 class="text-3xl font-bold text-center text-green-600 mb-6">Intern Register</h2>
 
-            <form method="POST" action="{{ route('intern.register.submit) }}">
+            <form method="POST" action="{{ route('intern.register.submit') }}">
                 @csrf
 
                 <div class="mb-4">
@@ -37,7 +37,7 @@
 
                 <p class="text-sm text-center mt-4 text-gray-600">
                     Already have an account?
-                    <a href="{{ route('intern.login') }}" class="text-blue-600 hover:underline">Login</a>
+                    <a href="{{ route('admin.login') }}" class="text-blue-600 hover:underline">Login</a>
                 </p>
             </form>
         </div>
