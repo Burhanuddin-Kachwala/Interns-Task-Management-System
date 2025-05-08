@@ -55,7 +55,7 @@ class ChatController extends Controller
         );
     
         // Broadcast the new message to the admin's channel
-        event(new NewChatMessage($message, $adminId, 'admin'));
+        broadcast(new NewChatMessage($message, $adminId, 'admin'));
     
         // Return the new message as JSON
         return response()->json(['message' => $message]);

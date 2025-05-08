@@ -38,30 +38,30 @@
     chatContainer.scrollTop = chatContainer.scrollHeight;
 
     // Echo private channel listener for admin
-    window.Echo.private(`chat.admin.${adminId}`).listen('.NewChatMessage', (event) => {
-        console.log('Intern message received'); // Debugging line
-        if (event.message.receiver_type === 'intern' && event.message.receiver_id === internId) {
-            const newMessageHtml = `
-                <div class="flex justify-start">
-                    <div class="max-w-xs px-4 py-2 rounded bg-gray-200">
-                        <p>${event.message.message}</p>
-                        <p class="text-xs mt-1 text-right opacity-70">${formatTimeAgo(event.message.created_at)}</p>
-                    </div>
-                </div>
-            `;
-            chatContainer.insertAdjacentHTML('beforeend', newMessageHtml);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-    });
+    // window.Echo.private(`chat.admin.${adminId}`).listen('.NewChatMessage', (event) => {
+    //     console.log('Intern message received : Intern Blade'); // Debugging line
+    //     if (event.message.receiver_type === 'intern' && event.message.receiver_id === internId) {
+    //         const newMessageHtml = `
+    //             <div class="flex justify-start">
+    //                 <div class="max-w-xs px-4 py-2 rounded bg-gray-200">
+    //                     <p>${event.message.message}</p>
+    //                     <p class="text-xs mt-1 text-right opacity-70">${formatTimeAgo(event.message.created_at)}</p>
+    //                 </div>
+    //             </div>
+    //         `;
+    //         chatContainer.insertAdjacentHTML('beforeend', newMessageHtml);
+    //         chatContainer.scrollTop = chatContainer.scrollHeight;
+    //     }
+    // });
 
     // Echo private channel listener for intern
     window.Echo.private(`chat.intern.${internId}`).listen('.NewChatMessage', (event) => {
-        console.log('Admin message received'); // Debugging line
+        console.log('Admin message received  : Intern Blade'); // Debugging line
 
-        if (event.message.sender_type === 'intern' && event.message.sender_id === internId && event.message.receiver_type === 'admin' && event.message.receiver_id === adminId) {
+        if (event.message.sender_type === 'admin' && event.message.sender_id === adminId && event.message.receiver_type === 'intern' && event.message.receiver_id === internId) {
             const newMessageHtml = `
-                <div class="flex justify-end">
-                    <div class="max-w-xs px-4 py-2 rounded bg-green-500 text-white">
+                <div class="flex justify-start">
+                    <div class="max-w-xs px-4 py-2 rounded bg-gray-200 text-black">
                         <p>${event.message.message}</p>
                         <p class="text-xs mt-1 text-right opacity-70">${formatTimeAgo(event.message.created_at)}</p>
                     </div>

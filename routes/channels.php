@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Broadcast;
 
 // Admin channel
 Broadcast::channel('chat.admin.{id}', function (Admin $admin, $id) {
+    Log::info('Admin ID: ' . $admin->id);
     return $admin->id === (int) $id;
 }, ['guards' => ['admin']]);
 

@@ -49,23 +49,23 @@
                 }
             });
         
-            // Echo listener for admin > intern (self messages)
-            window.Echo.private(`chat.intern.${internId}`).listen('.NewChatMessage', (event) => {
-                console.log('Intern message received'); // Debugging line
+            // // Echo listener for admin > intern (self messages)
+            // window.Echo.private(`chat.intern.${internId}`).listen('.NewChatMessage', (event) => {
+            //     console.log('Intern message received'); // Debugging line
 
-                if (event.message.sender_type === 'admin' && event.message.sender_id === adminId) {
-                    const newMessageHtml = `
-                        <div class="flex justify-end">
-                            <div class="max-w-xs px-4 py-2 rounded bg-blue-500 text-white">
-                                <p>${event.message.message}</p>
-                                <p class="text-xs mt-1 text-right opacity-70">${formatTimeAgo(event.message.created_at)}</p>
-                            </div>
-                        </div>
-                    `;
-                    chatContainer.insertAdjacentHTML('beforeend', newMessageHtml);
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                }
-            });
+            //     if (event.message.sender_type === 'admin' && event.message.sender_id === adminId) {
+            //         const newMessageHtml = `
+            //             <div class="flex justify-end">
+            //                 <div class="max-w-xs px-4 py-2 rounded bg-blue-500 text-white">
+            //                     <p>${event.message.message}</p>
+            //                     <p class="text-xs mt-1 text-right opacity-70">${formatTimeAgo(event.message.created_at)}</p>
+            //                 </div>
+            //             </div>
+            //         `;
+            //         chatContainer.insertAdjacentHTML('beforeend', newMessageHtml);
+            //         chatContainer.scrollTop = chatContainer.scrollHeight;
+            //     }
+            // });
         
             // Axios message send
             messageForm.addEventListener('submit', (event) => {
@@ -78,7 +78,7 @@
                             if (response.data && response.data.message) {
                                 const newMessageHtml = `
                                     <div class="flex justify-end">
-                                        <div class="max-w-xs px-4 py-2 rounded bg-blue-500 text-white">
+                                        <div class="max-w-xs px-4 py-2 rounded bg-indigo-500 text-white">
                                             <p>${response.data.message.message}</p>
                                             <p class="text-xs mt-1 text-right opacity-70">${formatTimeAgo(response.data.message.created_at)}</p>
                                         </div>

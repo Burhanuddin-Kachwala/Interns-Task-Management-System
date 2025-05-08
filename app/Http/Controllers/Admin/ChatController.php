@@ -54,7 +54,7 @@ class ChatController extends Controller
     );
     
     // Broadcast the new message
-event(new NewChatMessage($message, $internId, 'intern'));
+broadcast(new NewChatMessage($message, $internId, 'intern'));
 
     // Return the new message as JSON
     return response()->json(['message' => $message]);

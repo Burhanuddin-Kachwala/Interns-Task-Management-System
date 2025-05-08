@@ -2,14 +2,14 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
+
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Message;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+
 use Log;
 
 class NewChatMessage implements ShouldBroadcast
@@ -27,14 +27,12 @@ class NewChatMessage implements ShouldBroadcast
         $this->receiverType = $receiverType;
     }
 
-    public function broadcastOn(): array
+    public function broadcastOn()
     {
 
         $channelname="chat.{$this->receiverType}.{$this->receiverId}";
-        Log::info("Broadcasting on channel: {$channelname}");
-        return [
-            new PrivateChannel("chat.{$this->receiverType}.{$this->receiverId}"),
-        ];
+        Log::info("Broadcasting on channel smit: {$channelname}");
+        return new PrivateChannel("chat.{$this->receiverType}.{$this->receiverId}");
     }
 
     public function broadcastAs(): string
@@ -42,13 +40,13 @@ class NewChatMessage implements ShouldBroadcast
         return 'NewChatMessage';
     }
 
-    // Optional: Customize broadcast data
-    public function broadcastWith(): array
+   public function broadcastWith(): array
     {
         return [
-            'message' => $this->message->toArray(),
+            'message' => $this->message,
             'receiverId' => $this->receiverId,
             'receiverType' => $this->receiverType,
         ];
     }
+ 
 }
