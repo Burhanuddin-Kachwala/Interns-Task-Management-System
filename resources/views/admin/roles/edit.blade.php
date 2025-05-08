@@ -1,7 +1,7 @@
 <x-admin.layout>
     <h1 class="text-2xl font-bold mb-4">Edit Role</h1>
 
-    <form method="POST" action="{{ route('admin.roles.update', $role) }}">
+    <form id="admin_edit_role" method="POST" action="{{ route('admin.roles.update', $role) }}">
         @csrf
         @method('PUT')
 

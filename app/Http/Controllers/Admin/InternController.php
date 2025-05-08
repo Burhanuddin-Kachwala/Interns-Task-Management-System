@@ -28,14 +28,13 @@ class InternController extends Controller
             'name' => 'required|string|min:3',
             'email' => 'required|email|unique:interns,email',
             'password' => 'required|min:6|confirmed',
-            'role_id' => 'required|exists:roles,id',
         ]);
 
         Intern::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => $request->role_id,
+            'role_id' => Role::where('name', 'intern')->first()->id,
         ]);
 
         return redirect()->route('admin.interns.index')->with('success', 'Intern created successfully.');
@@ -43,8 +42,7 @@ class InternController extends Controller
 
     public function edit(Intern $intern)
     {
-        $roles = Role::all();
-        return view('admin.interns.edit', compact('intern', 'roles'));
+        return view('admin.interns.edit', compact('intern'));
     }
 
     public function update(Request $request, Intern $intern)
@@ -52,13 +50,13 @@ class InternController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:interns,email,' . $intern->id,
-            'role_id' => 'required|exists:roles,id',
+            // 'role_id' => 'required|exists:roles,id',
         ]);
 
         $intern->update([
             'name' => $request->name,
             'email' => $request->email,
-            'role_id' => $request->role_id,
+            'role_id' => Role::where('name', 'intern')->first()->id,
         ]);
 
         return redirect()->route('admin.interns.index')->with('success', 'Intern updated successfully.');

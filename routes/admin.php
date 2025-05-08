@@ -10,8 +10,11 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\AdminUserController;
 
 Route::prefix('admin')->group(function () {
-    Route::get('/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
+    Route::middleware(['guest:admin'])->group (function(){
+        Route::get('/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminController::class, 'login'])->name('admin.login.submit');
+    });
+    
 
     Route::middleware(['auth:admin'])->group(function () {
 

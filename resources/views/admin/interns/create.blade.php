@@ -1,7 +1,7 @@
 <x-admin.layout>
     <h2 class="text-xl font-semibold mb-4">Add New Intern</h2>
 
-    <form action="{{ route('admin.interns.store') }}" method="POST" class="space-y-4">
+    <form id="admin_create_intern" action="{{ route('admin.interns.store') }}" method="POST" class="space-y-4">
         @csrf
 
         <div class="mb-4">
@@ -24,12 +24,12 @@
             <input type="password" id="password_confirmation" name="password_confirmation" required class="w-full border rounded p-2">
         </div>
 
-        <label class="block text-sm">Role</label>
+        {{-- <label class="block text-sm">Role</label>
         <select name="role_id" class="w-full border rounded p-2">
             @foreach ($roles as $role)
                 <option value="{{ $role->id }}">{{ $role->name }}</option>
             @endforeach
-        </select>
+        </select> --}}
 
         <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded">Create</button>
     </form>
