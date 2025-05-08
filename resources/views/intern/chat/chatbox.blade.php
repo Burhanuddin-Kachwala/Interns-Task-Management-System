@@ -38,7 +38,8 @@
     chatContainer.scrollTop = chatContainer.scrollHeight;
 
     // Echo private channel listener for admin
-    window.Echo.private(`chat.admin.${adminId}`).listen('.new.message', (event) => {
+    window.Echo.private(`chat.admin.${adminId}`).listen('.NewChatMessage', (event) => {
+        console.log('Intern message received'); // Debugging line
         if (event.message.receiver_type === 'intern' && event.message.receiver_id === internId) {
             const newMessageHtml = `
                 <div class="flex justify-start">
@@ -54,7 +55,9 @@
     });
 
     // Echo private channel listener for intern
-    window.Echo.private(`chat.intern.${internId}`).listen('.new.message', (event) => {
+    window.Echo.private(`chat.intern.${internId}`).listen('.NewChatMessage', (event) => {
+        console.log('Admin message received'); // Debugging line
+
         if (event.message.sender_type === 'intern' && event.message.sender_id === internId && event.message.receiver_type === 'admin' && event.message.receiver_id === adminId) {
             const newMessageHtml = `
                 <div class="flex justify-end">

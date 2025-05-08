@@ -10,9 +10,9 @@ class BroadcastServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        Broadcast::routes(['middleware' => ['auth']]);
+        Broadcast::routes(['middleware' => ['web', 'auth:admin,intern']]);
         Broadcast::channel('chat.intern.*', function ($user, $internId) {
-            // dd($user, $internId, auth()->guard('admin')->check(), auth()->guard('admin')->id());
+            dd($user, $internId, auth()->guard('admin')->check(), auth()->guard('admin')->id());
             return auth()->guard('admin')->check() && auth()->guard('admin')->id() === (int)$internId;
         });
 

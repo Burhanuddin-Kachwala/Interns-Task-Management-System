@@ -31,10 +31,10 @@
         
             // Scroll to bottom on load
             chatContainer.scrollTop = chatContainer.scrollHeight;
-        
+          
             // Echo listener for intern > admin messages
-            window.Echo.private(`chat.admin.${adminId}`).listen('.new.message', (event) => {
-                console.log(event);
+            window.Echo.private(`chat.admin.${adminId}`).listen('.NewChatMessage', (event) => {   
+                console.log('Admin message received'); // Debugging line
                 if (event.message.sender_type === 'intern' && event.message.sender_id === internId) {
                     const newMessageHtml = `
                         <div class="flex justify-start">
@@ -50,7 +50,9 @@
             });
         
             // Echo listener for admin > intern (self messages)
-            window.Echo.private(`chat.intern.${internId}`).listen('.new.message', (event) => {
+            window.Echo.private(`chat.intern.${internId}`).listen('.NewChatMessage', (event) => {
+                console.log('Intern message received'); // Debugging line
+
                 if (event.message.sender_type === 'admin' && event.message.sender_id === adminId) {
                     const newMessageHtml = `
                         <div class="flex justify-end">

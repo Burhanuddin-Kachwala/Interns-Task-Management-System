@@ -52,9 +52,9 @@ class ChatController extends Controller
         'intern',
         $request->message
     );
-
+    
     // Broadcast the new message
-    event(new NewChatMessage($message, $internId, 'intern'));
+event(new NewChatMessage($message, $internId, 'intern'));
 
     // Return the new message as JSON
     return response()->json(['message' => $message]);
