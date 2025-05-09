@@ -37,6 +37,7 @@ class AdminUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role_id' => $request->role_id,
+            'is_active' => $request->has('is_active'), // true if checked, false otherwise
         ]);
 
         return redirect()->route('admin-users.index')->with('success', 'Admin created successfully.');
@@ -51,6 +52,9 @@ class AdminUserController extends Controller
 
     public function update(Request $request, Admin $admin_user)
     {
+        if (auth()->guard('admin')->id() === $admin_user->id) {
+            return redirect()->route('admin-users.index')->with('error', 'You cannot edit your own account.');
+        }
         // Validate request
         $request->validate([
             'name'     => 'required|string|max:255',
@@ -81,9 +85,14 @@ class AdminUserController extends Controller
     
     
 
-    public function destroy(Admin $admin)
+    public function destroy(Admin $admin_user)
     {
-        $admin->delete();
-        return redirect()->route('admin-users.index')->with('success', 'Admin deleted.');
+        // Check if trying to delete own account
+        if (auth()->guard('admin')->id() === $admin_user->id) {           
+            return redirect()->route('admin-users.index')->with('error', 'You cannot delete your own account.');
+        }
+
+        $admin_user->delete();
+        return redirect()->route('admin-users.index')->with('success', 'Admin deleted successfully.');
     }
 }

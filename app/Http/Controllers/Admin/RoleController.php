@@ -57,8 +57,6 @@ class RoleController extends Controller
         return redirect()->route('admin.roles.index')->with('success', 'Role created successfully.');
     }
 
-   
-
     // Show the form to edit an existing role
     public function edit(Role $role)
     {
@@ -69,6 +67,10 @@ class RoleController extends Controller
     // Update the specified role
     public function update(Request $request, Role $role)
     {
+         if (auth()->user()->role_id === $role->id) {
+            return redirect()->route('admin.roles.index')
+                ->with('error', 'You cannot edit your own role.');
+        }
         $validationRules = [
             'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
         ];
@@ -97,7 +99,14 @@ class RoleController extends Controller
     // Delete the specified role
     public function destroy(Role $role)
     {
+        // Check if user is trying to delete their own role
+        if (auth()->user()->role_id === $role->id) {
+            return redirect()->route('admin.roles.index')
+                ->with('error', 'You cannot delete your own role.');
+        }
+
         $role->delete();
-        return redirect()->route('admin.roles.index')->with('success', 'Role deleted successfully.');
+        return redirect()->route('admin.roles.index')
+                ->with('success', 'Role deleted successfully.');
     }
 }

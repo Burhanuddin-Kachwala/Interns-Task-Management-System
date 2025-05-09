@@ -31,10 +31,20 @@ class Admin extends Authenticatable
     }
     public function hasPermission($permissionName)
     {
-        if ($this->role && $this->role->is_superadmin) {
-            return true; 
+        // Force-load role and permissions if not loaded
+        if (!$this->relationLoaded('role') || !$this->role?->relationLoaded('permissions')) {
+            $this->load('role.permissions');
         }
-        return $this->role && $this->role->permissions->contains('slug', $permissionName);
+
+        if (!$this->role) {
+            return false;
+        }
+
+        if ($this->role->is_superadmin) {
+            return true;
+        }
+
+        return $this->role->permissions->contains('slug', $permissionName);
     }
 
     public function hasRole($slug)

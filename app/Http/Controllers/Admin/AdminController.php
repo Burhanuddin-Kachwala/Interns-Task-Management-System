@@ -22,18 +22,28 @@ class AdminController extends Controller
         ]);
 
         if (Auth::guard('admin')->attempt($credentials)) {
-            return redirect(route('admin.dashboard'));
+            $admin = Auth::guard('admin')->user();
+           
+            if (!$admin->is_active) {
+                Auth::guard('admin')->logout();
+                return back()->withErrors([
+                    'email' => 'Your account is inactive. Please contact the administrator.',
+                ])->with('error', 'Account inactive');
+            }
+
+            return redirect(route('admin.dashboard'))
+               ->with('success', 'Successfully logged in.');
         }
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
-        ]);
+        ])->with('error', 'Login failed. Please check your credentials.');
     }
 
     public function dashboard()
     {
-        $recentComments = TaskComment::with(['intern', 'task'])->latest()->take(5)->get();
-        return view('admin.dashboard', compact('recentComments'));
+        $Comments = TaskComment::with(['intern', 'task'])->latest()->get();
+        return view('admin.dashboard', compact('Comments'));
     }
 
     public function logout(Request $request)

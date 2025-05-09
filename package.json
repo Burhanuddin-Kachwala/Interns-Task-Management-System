@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "jquery": "^3.7.1",
-        "jquery-validation": "^1.21.0"
+        "jquery-validation": "^1.21.0",
+        "notyf": "^3.10.0"
     }
 }

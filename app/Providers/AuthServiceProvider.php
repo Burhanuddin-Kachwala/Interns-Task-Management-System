@@ -23,6 +23,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         Gate::before(function ($admin, $permission) {
+            // dd($admin->hasPermission($permission));
                        return $admin->hasPermission($permission);
           });
     }

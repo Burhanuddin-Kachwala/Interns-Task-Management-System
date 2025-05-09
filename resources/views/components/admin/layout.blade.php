@@ -6,8 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     {{-- summernote css --}}
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3.8.0/notyf.min.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <title>Admin Module</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -45,17 +44,24 @@
         © {{ date('Y') }} Intern Tasks Management System. All rights reserved.
     </footer>
       <!-- Toastr JS -->
-      <script src="https://cdn.jsdelivr.net/npm/notyf@3.8.0/notyf.min.js"></script>
-    <!-- Summernote CSS and JS -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/notyf@3.8.0/notyf.min.js"></script>
     <script>
-        $(document).ready(function() {            
-            $('.summernote').summernote({
-                // Set height of editor
+    
+     $('.summernote').summernote({                
                 height: 200,               
-            });
-        });
+            });     
+            const notyf = new Notyf();
+       
+
+            @if(session('success'))
+                notyf.success("{{ session('success') }}", 'Success');
+            @elseif(session('error'))
+                notyf.error("{{ session('error') }}", 'Error');     
+            @endif 
     </script>
 </body>
 </html>

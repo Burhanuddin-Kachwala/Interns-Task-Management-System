@@ -42,7 +42,12 @@ class TaskController extends Controller
             'comment' => $request->comment,
         ]);
 
-        return redirect()->back()->with('success', 'Comment added.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Comment added successfully',
+            'comment' => $task->comments()->latest()->first(),
+            'intern_name'=> Auth::guard('intern')->user()->name,
+        ]);
     }
 
     protected function authorizeTask(Task $task)

@@ -38,14 +38,14 @@
         <!-- Right Side - Recent Comments -->
         <div class="space-y-4">
             <div class="p-4 bg-white shadow rounded-md">
-                <h2 class="text-lg font-bold text-gray-700 mb-4">Recent Comments</h2>
+            <h2 class="text-lg font-bold text-gray-700 mb-4">Comments</h2>
 
-                @forelse ($recentComments as $comment)
-                    <div class="mb-3 border-b pb-2">
-                        <p class="text-sm text-gray-800">
-                            <strong>{{ $comment->intern->name }}</strong> on 
-                            <span class="text-indigo-600 font-medium">"{{ $comment->task->title }}"</span>
-                        </p>
+            <div class="max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                @forelse ($Comments as $comment)
+                <div class="mb-3 border-b pb-2">
+                    <p class="text-sm text-gray-800">
+                    <strong>{{ $comment->intern->name }}</strong> on 
+                    <span class
                         <p class="text-sm text-gray-600 italic truncate">"{{ $comment->comment }}"</p>
                         <p class="text-xs text-gray-400">{{ $comment->created_at->diffForHumans() }}</p>
                     </div>
