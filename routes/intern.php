@@ -5,9 +5,12 @@ use App\Http\Controllers\Intern\ChatController;
 use App\Http\Controllers\Intern\TaskController;
 use App\Http\Controllers\Intern\InternController;
 
+Route::get('/', [InternController::class, 'dashboard'])
+->name('intern.dashboard')
+->middleware(['auth:intern']);
 Route::prefix('intern')->group(function () {
     Route::middleware(['auth:intern'])->group(function () {
-        Route::get('/', [InternController::class, 'dashboard'])->name('intern.dashboard');
+        // Route::get('/', [InternController::class, 'dashboard'])->name('intern.dashboard');
         Route::post('/logout', [InternController::class, 'logout'])->name('intern.logout');
         Route::get('/tasks', [TaskController::class, 'index'])->name('intern.tasks.index');
         Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('intern.tasks.show');

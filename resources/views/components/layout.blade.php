@@ -14,7 +14,7 @@
     <!-- Header -->
     <header class="bg-white shadow-md py-4 px-6 flex justify-between items-center">
         <h1 class="text-2xl font-bold text-indigo-600">
-            <a href="{{ url('/intern') }}">Intern Task Manager</a>
+            <a href="{{ route('intern.dashboard') }}">Intern Task Manager</a>
         </h1>
         @auth
             <div class="flex items-center space-x-4">
@@ -23,8 +23,7 @@
                     @csrf
                     <button class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 text-sm" type="submit">Logout</button>
                 </form>
-                <form method="get" action="{{ route('intern.chat.index') }}">
-                   
+                <form method="get" action="{{ route('intern.chat.index') }}">                   
                     <button class="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 text-sm" type="submit">Chat</button>
                 </form>
             </div>
