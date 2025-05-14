@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Intern;
 
 use App\Events\NewChatMessage;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Chat\SendChatMessageRequest;
 use Illuminate\Http\Request;
 use App\Models\Admin;
 use App\Models\Message;
@@ -47,31 +48,28 @@ class ChatController extends Controller
         }
     }
 
-    public function send(Request $request, $adminId)
-    {
-        try {
-            $request->validate([
-                'message' => 'required|string',
-            ]);
-        
-            $intern = auth()->guard('intern')->user();
-        
-            $message = $this->chatService->sendMessage(
-                $intern->id,
-                'intern',
-                $adminId,
-                'admin',
-                $request->message
-            );
-        
-            broadcast(new NewChatMessage($message, $adminId, 'admin'));
-        
-            return response()->json(['message' => $message]);
+ public function send(SendChatMessageRequest $request, $adminId)
+{
+    try {
+        $intern = auth()->guard('intern')->user();
+    
+        $message = $this->chatService->sendMessage(
+            $intern->id,
+            'intern',
+            $adminId,
+            'admin',
+            $request->message
+        );
+    
+        broadcast(new NewChatMessage($message, $adminId, 'admin'));
+    
+        return response()->json(['message' => $message]);
 
-        } catch (Exception $e) {
-            return response()->json([
-                'error' => 'Failed to send message: ' . $e->getMessage()
-            ], 500);
-        }
+    } catch (Exception $e) {
+        return response()->json([
+            'error' => 'Failed to send message: ' . $e->getMessage()
+        ], 500);
     }
+}
+
 }

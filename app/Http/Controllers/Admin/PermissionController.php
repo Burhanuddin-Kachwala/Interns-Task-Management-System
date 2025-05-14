@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Exception;
 use App\Models\Permission;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Str;
-use Exception;
+use App\Http\Requests\Admin\PermissionRequest;
 
 class PermissionController extends Controller
 {
@@ -29,23 +30,19 @@ class PermissionController extends Controller
         }
     }
     
-    public function store(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255|unique:permissions',
-            ]);
-
-            Permission::create([
-                'name' => $validated['name'],
-                'slug' => Str::slug($validated['name'])
-            ]);
-            return redirect()->route('admin.permissions.index')->with('success', 'Permission created successfully.');
-        } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Error creating permission: ' . $e->getMessage())
-                ->withInput();
-        }
+   public function store(PermissionRequest $request)
+{
+    try {
+        Permission::create([
+            'name' => $request->name,
+            'slug' => \Str::slug($request->name),
+        ]);
+        return redirect()->route('admin.permissions.index')->with('success', 'Permission created successfully.');
+    } catch (Exception $e) {
+        return redirect()->back()->with('error', 'Error creating permission: ' . $e->getMessage())
+            ->withInput();
     }
+}
     
     public function edit(Permission $permission)
     {
@@ -56,23 +53,20 @@ class PermissionController extends Controller
         }
     }
     
-    public function update(Request $request, Permission $permission)
-    {
-        try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255|unique:permissions,name,' . $permission->id,
-            ]);
-
-            $permission->update([
-                'name' => $validated['name'],
-                'slug' => Str::slug($validated['name'])
-            ]);
-            return redirect()->route('admin.permissions.index')->with('success', 'Permission updated successfully.');
-        } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Error updating permission: ' . $e->getMessage())
-                ->withInput();
-        }
+  public function update(PermissionRequest $request, Permission $permission)
+{
+    try {
+        $permission->update([
+            'name' => $request->name,
+            'slug' => \Str::slug($request->name),
+        ]);
+        return redirect()->route('admin.permissions.index')->with('success', 'Permission updated successfully.');
+    } catch (Exception $e) {
+        return redirect()->back()->with('error', 'Error updating permission: ' . $e->getMessage())
+            ->withInput();
     }
+}
+
     
     public function destroy(Permission $permission)
     {

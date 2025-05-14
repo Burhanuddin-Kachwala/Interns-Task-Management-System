@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
+use App\Http\Requests\Admin\StoreRoleRequest;
 
 class RoleController extends Controller
 {
@@ -31,45 +32,32 @@ class RoleController extends Controller
         }
     }
 
-    public function store(Request $request)
-    {
-        try {
-            $validationRules = [
-                'name' => 'required|string|max:255|unique:roles,name',
-            ];
+  
 
-            if (!$request->input('is_superadmin')) {
-                $validationRules['permissions'] = 'required|array';
-            }
+public function store(StoreRoleRequest $request)
+{
+    try {
+        DB::beginTransaction();
+        $role = Role::create([
+            'name' => $request->name,
+            'slug' => str_replace(' ', '-', strtolower($request->name)),
+            'is_superadmin' => $request->has('is_superadmin') ? true : false
+        ]);
 
-            $validatedData = $request->validate($validationRules);
-
-            DB::beginTransaction();
-            try {
-                $role = Role::create([
-                    'name' => $validatedData['name'],
-                    'slug' => str_replace(' ', '-', strtolower($validatedData['name'])),
-                    'is_superadmin' => $request->has('is_superadmin') ? true : false
-                ]);
-
-                if ($role->is_superadmin) {
-                    $role->permissions()->sync(Permission::all()->pluck('id'));
-                } else {
-                    $role->permissions()->sync($request->input('permissions', []));
-                }
-
-                DB::commit();
-                return redirect()->route('admin.roles.index')->with('success', 'Role created successfully.');
-            } catch (\Exception $e) {
-                DB::rollBack();
-                throw $e;
-            }
-        } catch (ValidationException $e) {
-            return redirect()->back()->withErrors($e->validator)->withInput();
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create role: ' . $e->getMessage())->withInput();
+        if ($role->is_superadmin) {
+            $role->permissions()->sync(Permission::all()->pluck('id'));
+        } else {
+            $role->permissions()->sync($request->input('permissions', []));
         }
+
+        DB::commit();
+        return redirect()->route('admin.roles.index')->with('success', 'Role created successfully.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->with('error', 'Failed to create role: ' . $e->getMessage())->withInput();
     }
+}
+
 
     public function edit(Role $role)
     {
@@ -81,71 +69,51 @@ class RoleController extends Controller
         }
     }
 
-    public function update(Request $request, Role $role)
-    {
-        try {
-            if (auth()->user()->role_id === $role->id) {
-                return redirect()->route('admin.roles.index')
-                    ->with('error', 'You cannot edit your own role.');
-            }
-
-            $validationRules = [
-                'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-            ];
-
-            if (!$request->input('is_superadmin')) {
-                $validationRules['permissions'] = 'required|array';
-            }
-
-            $validatedData = $request->validate($validationRules);
-
-            DB::beginTransaction();
-            try {
-                $role->update([
-                    'name' => $validatedData['name'],
-                    'slug' => str_replace(' ', '-', strtolower($validatedData['name'])),
-                    'is_superadmin' => $request->has('is_superadmin') ? true : false
-                ]);
-
-                if ($role->is_superadmin) {
-                    $role->permissions()->sync(Permission::all()->pluck('id'));
-                } else {
-                    $role->permissions()->sync($request->input('permissions', []));
-                }
-
-                DB::commit();
-                return redirect()->route('admin.roles.index')->with('success', 'Role updated successfully.');
-            } catch (\Exception $e) {
-                DB::rollBack();
-                throw $e;
-            }
-        } catch (ValidationException $e) {
-            return redirect()->back()->withErrors($e->validator)->withInput();
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to update role: ' . $e->getMessage())->withInput();
-        }
+   public function update(StoreRoleRequest $request, Role $role)
+{
+    if (auth()->user()->role_id === $role->id) {
+        return redirect()->route('admin.roles.index')
+            ->with('error', 'You cannot edit your own role.');
     }
+
+    DB::beginTransaction();
+
+    try {
+        $role->update([
+            'name' => $request->name,
+            'slug' => str_replace(' ', '-', strtolower($request->name)),
+            'is_superadmin' => $request->has('is_superadmin'),
+        ]);
+
+        if ($role->is_superadmin) {
+            $role->permissions()->sync(Permission::all()->pluck('id'));
+        } else {
+            $role->permissions()->sync($request->input('permissions', []));
+        }
+
+        DB::commit();
+        return redirect()->route('admin.roles.index')->with('success', 'Role updated successfully.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->with('error', 'Failed to update role: ' . $e->getMessage())->withInput();
+    }
+}
+
 
     public function destroy(Role $role)
     {
-        try {
-            if (auth()->user()->role_id === $role->id) {
-                return redirect()->route('admin.roles.index')
-                    ->with('error', 'You cannot delete your own role.');
-            }
+        if (auth()->user()->role_id === $role->id) {
+            return redirect()->route('admin.roles.index')
+                ->with('error', 'You cannot delete your own role.');
+        }
 
-            DB::beginTransaction();
-            try {
-                $role->delete();
-                DB::commit();
-                return redirect()->route('admin.roles.index')
-                    ->with('success', 'Role deleted successfully.');
-            } catch (\Exception $e) {
-                DB::rollBack();
-                throw $e;
-            }
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to delete role: ' . $e->getMessage());
+        try {
+                $role->delete();           
+            return redirect()->route('admin.roles.index')
+                ->with('success', 'Role deleted successfully.');
+        } catch (\Exception $e) {           
+            return redirect()->back()
+                ->with('error', 'Failed to delete role: ' . $e->getMessage());
         }
     }
 }

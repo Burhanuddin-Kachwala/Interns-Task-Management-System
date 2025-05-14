@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\Intern;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\InternRequest;
 use Illuminate\Support\Facades\Hash;
 use Exception;
 
@@ -31,15 +32,9 @@ class InternController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(InternRequest $request)
     {
         try {
-            $request->validate([
-                'name' => 'required|string|min:3',
-                'email' => 'required|email|unique:interns,email',
-                'password' => 'required|min:6|confirmed',
-            ]);
-
             Intern::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -63,14 +58,9 @@ class InternController extends Controller
         }
     }
 
-    public function update(Request $request, Intern $intern)
+     public function update(InternRequest $request, Intern $intern)
     {
         try {
-            $request->validate([
-                'name' => 'required|string',
-                'email' => 'required|email|unique:interns,email,' . $intern->id,
-            ]);
-
             $intern->update([
                 'name' => $request->name,
                 'email' => $request->email,

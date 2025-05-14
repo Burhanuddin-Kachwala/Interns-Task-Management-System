@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Intern;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Intern\StoreTaskCommentRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -35,33 +36,30 @@ class TaskController extends Controller
         }
     }
 
-    public function storeComment(Request $request, Task $task)
-    {
-        try {
-            $this->authorizeTask($task);
+ public function storeComment(StoreTaskCommentRequest $request, Task $task)
+{
+    try {
+        $this->authorizeTask($task);
 
-            $request->validate([
-                'comment' => 'required|string|max:1000',
-            ]);
+        $comment = $task->comments()->create([
+            'intern_id' => Auth::guard('intern')->id(),
+            'comment' => $request->comment,
+        ]);
 
-            $comment = $task->comments()->create([
-                'intern_id' => Auth::guard('intern')->id(),
-                'comment' => $request->comment,
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Comment added successfully',
-                'comment' => $comment,
-                'intern_name'=> Auth::guard('intern')->user()->name,
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to add comment: ' . $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Comment added successfully',
+            'comment' => $comment,
+            'intern_name' => Auth::guard('intern')->user()->name,
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to add comment: ' . $e->getMessage()
+        ], 500);
     }
+}
+
 
     protected function authorizeTask(Task $task)
     {
