@@ -12,7 +12,7 @@
 
         <div class="mb-4">
             <label for="is_superadmin" class="font-semibold">Is Superadmin?</label>
-            <input type="checkbox" name="is_superadmin" id="is_superadmin" value="1" {{ old('is_superadmin') ? 'checked' : '' }}>
+            <input type="checkbox" name="is_superadmin" id="is_superadmin" value="1" {{ old('is_superadmin', $role->is_superadmin) ? 'checked' : '' }}>
         </div>
 
         <div id="permissions-container">

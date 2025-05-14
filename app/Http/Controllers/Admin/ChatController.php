@@ -7,6 +7,8 @@ use App\Models\Intern;
 use App\Services\ChatService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Exception;
 
 class ChatController extends Controller
 {
@@ -19,44 +21,72 @@ class ChatController extends Controller
 
     public function index()
     {
-        // List of all interns the admin can chat with
-        $interns = Intern::all();
-        return view('admin.chat.index', compact('interns'));
+        try {
+            $interns = Intern::all();
+            return view('admin.chat.index', compact('interns'));
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to load interns list',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function show($internId)
     {
-        $admin = Auth::guard('admin')->user();
-        $intern = Intern::findOrFail($internId);
+        try {
+            $admin = Auth::guard('admin')->user();
+            $intern = Intern::findOrFail($internId);
 
-        $messages = $this->chatService->getConversation(
-            $admin->id,
-            'admin',
-            $internId,
-            'intern'
-        );
+            $messages = $this->chatService->getConversation(
+                $admin->id,
+                'admin',
+                $internId,
+                'intern'
+            );
 
-        return view('admin.chat.chatbox', compact('admin', 'intern', 'messages'));
+            return view('admin.chat.chatbox', compact('admin', 'intern', 'messages'));
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Intern not found',
+                'message' => 'The requested intern does not exist'
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to load chat',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
-   public function send(Request $request, $internId)
-{
-    $request->validate(['message' => 'required|string']);
+    public function send(Request $request, $internId)
+    {
+        try {
+            $request->validate(['message' => 'required|string']);
 
-    $admin = Auth::guard('admin')->user();
+            $admin = Auth::guard('admin')->user();
 
-    $message = $this->chatService->sendMessage(
-        $admin->id,
-        'admin',
-        $internId,
-        'intern',
-        $request->message
-    );
-    
-    // Broadcast the new message
-broadcast(new NewChatMessage($message, $internId, 'intern'));
+            $message = $this->chatService->sendMessage(
+                $admin->id,
+                'admin',
+                $internId,
+                'intern',
+                $request->message
+            );
+            
+            broadcast(new NewChatMessage($message, $internId, 'intern'));
 
-    // Return the new message as JSON
-    return response()->json(['message' => $message]);
-}
+            return response()->json(['message' => $message]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Intern not found',
+                'message' => 'The requested intern does not exist'
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to send message',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

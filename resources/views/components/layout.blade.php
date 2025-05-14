@@ -44,8 +44,11 @@
     <footer class="bg-white text-center text-sm text-gray-500 py-4 shadow-inner">
         © {{ date('Y') }} Intern Tasks Management System. All rights reserved.
     </footer>
-    <!-- Toastr JS -->
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     @vite(['resources/js/app.js'])
+        <!-- Toaster JS File -->
     <script src="https://cdn.jsdelivr.net/npm/notyf@3.8.0/notyf.min.js"></script>
     <script>
         const notyf = new Notyf();
