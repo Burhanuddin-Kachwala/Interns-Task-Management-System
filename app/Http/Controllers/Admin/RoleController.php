@@ -9,12 +9,7 @@ use App\Http\Controllers\Controller;
 
 class RoleController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    // }
-
-    // Display all roles
+     // Display all roles
     public function index()
     {
         $roles = Role::with('permissions')->get();

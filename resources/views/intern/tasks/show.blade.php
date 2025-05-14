@@ -18,40 +18,44 @@
 
             <!-- Comments List -->
             <div class="space-y-4 mb-6">
-                <div id="commentList" class="h-64 overflow-y-auto">
-                    @foreach ($comments->reverse() as $comment)
-                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
-                            <p class="text-gray-700">{{ $comment->comment }}</p>
-                            <div class="flex items-center mt-3">
-                                <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                                    <span class="text-indigo-600 font-semibold">{{ substr($comment->intern->name, 0, 1) }}</span>
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm font-medium text-gray-900">{{ $comment->intern->name }}</p>
-                                    <p class="text-xs text-gray-500">{{ $comment->created_at->diffForHumans() }}</p>
-                                </div>
-                            </div>
+            <div id="commentList" class="h-64 overflow-y-auto">
+                @if($comments->count() > 0)
+                @foreach ($comments->reverse() as $comment)
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
+                    <p class="text-gray-700">{{ $comment->comment }}</p>
+                    <div class="flex items-center mt-3">
+                        <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                        <span class="text-indigo-600 font-semibold">{{ substr($comment->intern->name, 0, 1) }}</span>
                         </div>
-                    @endforeach
-                </div>
+                        <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">{{ $comment->intern->name }}</p>
+                        <p class="text-xs text-gray-500">{{ $comment->created_at->diffForHumans() }}</p>
+                        </div>
+                    </div>
+                    </div>
+                @endforeach
+                @else
+                <p class="text-gray-500 text-center py-4">No comments yet</p>
+                @endif
+            </div>
             </div>
 
             <!-- Comment Form -->
             <form id="intern_comment_form" action="{{ route('intern.tasks.comment', $task) }}" method="POST">
-                @csrf
-                <div class="mb-4">
-                    <textarea 
-                        name="comment" 
-                        rows="3" 
-                        required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
-                        placeholder="Add your comment..."></textarea>
-                </div>
-                <button 
-                    type="submit" 
-                    class="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Post Comment
-                </button>
+            @csrf
+            <div class="mb-4">
+                <textarea 
+                name="comment" 
+                rows="3" 
+                required 
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                placeholder="Add your comment..."></textarea>
+            </div>
+            <button 
+                type="submit" 
+                class="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Post Comment
+            </button>
             </form>
         </div>
     </div>
