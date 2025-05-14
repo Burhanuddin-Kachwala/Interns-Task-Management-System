@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Admin;
 use App\Models\Message;
 use App\Services\ChatService;
+use Exception;
 
 class ChatController extends Controller
 {
@@ -17,47 +18,60 @@ class ChatController extends Controller
     {
         $this->chatService = $chatService;
     }
+
     public function index()
     {
-        $admins = Admin::all();
-        return view('intern.chat.index', compact('admins'));
+        try {
+            $admins = Admin::all();
+            return view('intern.chat.index', compact('admins'));
+        } catch (Exception $e) {
+            return back()->with('error', 'Failed to load administrators: ' . $e->getMessage());
+        }
     }
 
     public function show($adminId)
     {
-        $intern = auth()->guard('intern')->user();
-        $admin = Admin::findOrFail($adminId);
+        try {
+            $intern = auth()->guard('intern')->user();
+            $admin = Admin::findOrFail($adminId);
 
-        $messages = $this->chatService->getConversation(
-            $intern->id,
-            'intern',
-            $admin->id,
-            'admin'
-        );
-        return view('intern.chat.chatbox', compact('admin', 'intern', 'messages'));
+            $messages = $this->chatService->getConversation(
+                $intern->id,
+                'intern',
+                $admin->id,
+                'admin'
+            );
+            return view('intern.chat.chatbox', compact('admin', 'intern', 'messages'));
+        } catch (Exception $e) {
+            return back()->with('error', 'Failed to load chat conversation: ' . $e->getMessage());
+        }
     }
-
 
     public function send(Request $request, $adminId)
     {
-        $request->validate([
-            'message' => 'required|string',
-        ]);
-    
-        $intern = auth()->guard('intern')->user();
-    
-        $message = $this->chatService->sendMessage(
-            $intern->id,
-            'intern',
-            $adminId,
-            'admin',
-            $request->message
-        );
-    
-        // Broadcast the new message to the admin's channel
-        broadcast(new NewChatMessage($message, $adminId, 'admin'));
-    
-        // Return the new message as JSON
-        return response()->json(['message' => $message]);
+        try {
+            $request->validate([
+                'message' => 'required|string',
+            ]);
+        
+            $intern = auth()->guard('intern')->user();
+        
+            $message = $this->chatService->sendMessage(
+                $intern->id,
+                'intern',
+                $adminId,
+                'admin',
+                $request->message
+            );
+        
+            broadcast(new NewChatMessage($message, $adminId, 'admin'));
+        
+            return response()->json(['message' => $message]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to send message: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
