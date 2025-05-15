@@ -6,31 +6,36 @@ use App\Models\Task;
 use App\Models\Intern;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreOrUpdateTaskRequest;
 
 class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::with('interns')->latest()->get();
-        return view('admin.tasks.index', compact('tasks'));
+        try {
+            $tasks = Task::with('interns')->latest()->get();
+            return view('admin.tasks.index', compact('tasks'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error loading tasks: ' . $e->getMessage());
+        }
     }
 
     public function create()
     {
-        $interns = Intern::all();
-        return view('admin.tasks.create', compact('interns'));
+        try {
+            $interns = Intern::all();
+            return view('admin.tasks.create', compact('interns'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error loading create form: ' . $e->getMessage());
+        }
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'deadline'    => 'required|date',
-            'interns'     => 'nullable|array',
-            'interns.*'   => 'exists:interns,id',
-        ]);
+    public function store(StoreOrUpdateTaskRequest $request)
+{
+    try {
+        DB::beginTransaction();
 
         $task = Task::create([
             'title'       => $request->title,
@@ -42,25 +47,30 @@ class TaskController extends Controller
 
         $task->interns()->sync($request->interns ?? []);
 
+        DB::commit();
         return redirect()->route('admin.tasks.index')->with('success', 'Task created successfully.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Failed to create task: ' . $e->getMessage());
     }
+}
+
 
     public function edit(Task $task)
     {
-        $interns = Intern::all();
-        $assignedInterns = $task->interns->pluck('id')->toArray();
-        return view('admin.tasks.edit', compact('task', 'interns', 'assignedInterns'));
+        try {
+            $interns = Intern::all();
+            $assignedInterns = $task->interns->pluck('id')->toArray();
+            return view('admin.tasks.edit', compact('task', 'interns', 'assignedInterns'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error loading edit form: ' . $e->getMessage());
+        }
     }
 
-    public function update(Request $request, Task $task)
-    {
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'deadline'    => 'required|date',
-            'interns'     => 'nullable|array',
-            'interns.*'   => 'exists:interns,id',
-        ]);
+    public function update(StoreOrUpdateTaskRequest $request, Task $task)
+{
+    try {
+        DB::beginTransaction();
 
         $task->update([
             'title'       => $request->title,
@@ -70,12 +80,22 @@ class TaskController extends Controller
 
         $task->interns()->sync($request->interns ?? []);
 
+        DB::commit();
         return redirect()->route('admin.tasks.index')->with('success', 'Task updated successfully.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Failed to update task: ' . $e->getMessage());
     }
+}
+
 
     public function destroy(Task $task)
     {
-        $task->delete();
-        return back()->with('success', 'Task deleted.');
+        try {
+            $task->delete();
+            return back()->with('success', 'Task deleted.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to delete task: ' . $e->getMessage());
+        }
     }
 }

@@ -24,7 +24,7 @@
                     <label for="email" class="block text-gray-700 font-medium">Email</label>
                     <input id="email" name="email" type="email" value="{{ old('email', $admin->email ?? '') }}"
                         required class="mt-1 block w-full px-4 py-2 border border-gray-300 bg-gray-100 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        disabled>
+                        readonly>
                     @error('email')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror

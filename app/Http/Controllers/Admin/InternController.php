@@ -6,65 +6,81 @@ use App\Models\Role;
 use App\Models\Intern;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\InternRequest;
 use Illuminate\Support\Facades\Hash;
+use Exception;
 
 class InternController extends Controller
 {
     public function index()
     {
-        $interns = Intern::with('role')->get();
-        return view('admin.interns.index', compact('interns'));
+        try {
+            $interns = Intern::with('role')->get();
+            return view('admin.interns.index', compact('interns'));
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Error loading interns: ' . $e->getMessage());
+        }
     }
 
     public function create()
     {
-        $roles = Role::all();
-        return view('admin.interns.create', compact('roles'));
+        try {
+            $roles = Role::all();
+            return view('admin.interns.create', compact('roles'));
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Error loading create form: ' . $e->getMessage());
+        }
     }
 
-    public function store(Request $request)
+    public function store(InternRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|min:3',
-            'email' => 'required|email|unique:interns,email',
-            'password' => 'required|min:6|confirmed',
-        ]);
+        try {
+            Intern::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role_id' => Role::where('name', 'intern')->first()->id,
+            ]);
 
-        Intern::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id' => Role::where('name', 'intern')->first()->id,
-        ]);
-
-        return redirect()->route('admin.interns.index')->with('success', 'Intern created successfully.');
+            return redirect()->route('admin.interns.index')->with('success', 'Intern created successfully.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Error creating intern: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     public function edit(Intern $intern)
     {
-        return view('admin.interns.edit', compact('intern'));
+        try {
+            return view('admin.interns.edit', compact('intern'));
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Error loading edit form: ' . $e->getMessage());
+        }
     }
 
-    public function update(Request $request, Intern $intern)
+     public function update(InternRequest $request, Intern $intern)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:interns,email,' . $intern->id,
-            // 'role_id' => 'required|exists:roles,id',
-        ]);
+        try {
+            $intern->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'role_id' => Role::where('name', 'intern')->first()->id,
+            ]);
 
-        $intern->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role_id' => Role::where('name', 'intern')->first()->id,
-        ]);
-
-        return redirect()->route('admin.interns.index')->with('success', 'Intern updated successfully.');
+            return redirect()->route('admin.interns.index')->with('success', 'Intern updated successfully.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Error updating intern: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     public function destroy(Intern $intern)
     {
-        $intern->delete();
-        return redirect()->route('admin.interns.index')->with('success', 'Intern deleted.');
+        try {
+            $intern->delete();
+            return redirect()->route('admin.interns.index')->with('success', 'Intern deleted.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Error deleting intern: ' . $e->getMessage());
+        }
     }
 }
