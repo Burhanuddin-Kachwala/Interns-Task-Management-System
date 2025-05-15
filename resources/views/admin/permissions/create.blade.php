@@ -5,7 +5,10 @@
         @csrf
         <div>
             <label>Name:</label>
-            <input type="text" name="name" class="border rounded p-2 w-full" required>
+            <input type="text" name="name" class="border rounded p-2 w-full" required value="{{ old('name') }}">
+            @error('name')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         {{-- <div class="mt-4">

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Intern;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Intern\InternLoginRequest;
+use App\Http\Requests\Intern\InternRegisterRequest;
 use App\Models\Intern;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,31 +22,24 @@ class InternController extends Controller
             return back()->with('error', 'Error loading registration form: ' . $e->getMessage());
         }
     }
+public function register(InternRegisterRequest $request)
+{
+    try {
+        $intern = Intern::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
-    public function register(Request $request)
-    {
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:interns',
-                'password' => 'required|string|min:8|confirmed',
-            ]);
+        Auth::guard('intern')->login($intern);
 
-            $intern = Intern::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-            ]);
-
-            Auth::guard('intern')->login($intern);
-
-            return redirect()->route('intern.dashboard')->with('success', 'Registration successful!');
-        } catch (QueryException $e) {
-            return back()->with('error', 'Database error during registration. Please try again.')->withInput();
-        } catch (Exception $e) {
-            return back()->with('error', 'Registration failed: ' . $e->getMessage())->withInput();
-        }
+        return redirect()->route('intern.dashboard')->with('success', 'Registration successful!');
+    } catch (QueryException $e) {
+        return back()->with('error', 'Database error during registration. Please try again.')->withInput();
+    } catch (Exception $e) {
+        return back()->with('error', 'Registration failed: ' . $e->getMessage())->withInput();
     }
+}
 
     public function showLoginForm()
     {
@@ -55,25 +50,24 @@ class InternController extends Controller
         }
     }
 
-    public function login(Request $request)
-    {
-        try {
-            $request->validate([
-                'email' => 'required|string|email',
-                'password' => 'required|string',
-            ]);
-
-            if (Auth::guard('intern')->attempt(['email' => $request->email, 'password' => $request->password])) {
-                return redirect()->route('intern.dashboard')->with('success', 'Login successful!');
-            }
-
-            return back()->withErrors([
-                'email' => 'Invalid credentials.',
-            ])->withInput();
-        } catch (Exception $e) {
-            return back()->with('error', 'Login failed: ' . $e->getMessage())->withInput();
+   public function login(InternLoginRequest $request)
+{
+    try {
+        if (Auth::guard('intern')->attempt([
+            'email' => $request->email,
+            'password' => $request->password
+        ])) {
+            return redirect()->route('intern.dashboard')->with('success', 'Login successful!');
         }
+
+        return back()->withErrors([
+            'email' => 'Invalid credentials.',
+        ])->withInput();
+    } catch (Exception $e) {
+        return back()->with('error', 'Login failed: ' . $e->getMessage())->withInput();
     }
+}
+
 
     public function dashboard()
     {

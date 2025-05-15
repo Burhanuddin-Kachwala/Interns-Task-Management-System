@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreOrUpdateTaskRequest;
 
 class TaskController extends Controller
 {
@@ -31,36 +32,29 @@ class TaskController extends Controller
         }
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'deadline'    => 'required|date',
-            'interns'     => 'nullable|array',
-            'interns.*'   => 'exists:interns,id',
+    public function store(StoreOrUpdateTaskRequest $request)
+{
+    try {
+        DB::beginTransaction();
+
+        $task = Task::create([
+            'title'       => $request->title,
+            'slug'        => Str::slug($request->title) . '-' . Str::random(5),
+            'description' => $request->description,
+            'admin_id'    => auth('admin')->id(),
+            'deadline'    => $request->deadline,
         ]);
 
-        try {
-            DB::beginTransaction();
+        $task->interns()->sync($request->interns ?? []);
 
-            $task = Task::create([
-                'title'       => $request->title,
-                'slug'        => Str::slug($request->title) . '-' . Str::random(5),
-                'description' => $request->description,
-                'admin_id'    => auth('admin')->id(),
-                'deadline'    => $request->deadline,
-            ]);
-
-            $task->interns()->sync($request->interns ?? []);
-
-            DB::commit();
-            return redirect()->route('admin.tasks.index')->with('success', 'Task created successfully.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Failed to create task: ' . $e->getMessage());
-        }
+        DB::commit();
+        return redirect()->route('admin.tasks.index')->with('success', 'Task created successfully.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Failed to create task: ' . $e->getMessage());
     }
+}
+
 
     public function edit(Task $task)
     {
@@ -73,44 +67,34 @@ class TaskController extends Controller
         }
     }
 
-    public function update(Request $request, Task $task)
-    {
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'deadline'    => 'required|date',
-            'interns'     => 'nullable|array',
-            'interns.*'   => 'exists:interns,id',
+    public function update(StoreOrUpdateTaskRequest $request, Task $task)
+{
+    try {
+        DB::beginTransaction();
+
+        $task->update([
+            'title'       => $request->title,
+            'description' => $request->description,
+            'deadline'    => $request->deadline,
         ]);
 
-        try {
-            DB::beginTransaction();
+        $task->interns()->sync($request->interns ?? []);
 
-            $task->update([
-                'title'       => $request->title,
-                'description' => $request->description,
-                'deadline'    => $request->deadline,
-            ]);
-
-            $task->interns()->sync($request->interns ?? []);
-
-            DB::commit();
-            return redirect()->route('admin.tasks.index')->with('success', 'Task updated successfully.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Failed to update task: ' . $e->getMessage());
-        }
+        DB::commit();
+        return redirect()->route('admin.tasks.index')->with('success', 'Task updated successfully.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Failed to update task: ' . $e->getMessage());
     }
+}
+
 
     public function destroy(Task $task)
     {
         try {
-            DB::beginTransaction();
             $task->delete();
-            DB::commit();
             return back()->with('success', 'Task deleted.');
         } catch (\Exception $e) {
-            DB::rollBack();
             return back()->with('error', 'Failed to delete task: ' . $e->getMessage());
         }
     }

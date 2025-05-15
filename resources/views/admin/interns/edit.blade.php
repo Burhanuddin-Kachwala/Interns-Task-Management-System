@@ -8,13 +8,19 @@
         <div class="mb-4">
             <label for="name" class="block text-sm">Name</label>
             <input type="text" id="name" name="name" value="{{ $intern->name }}" required 
-                class="w-full border rounded p-2">
+                class="w-full border rounded p-2 @error('name') border-red-500 @enderror">
+            @error('name')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         <div class="mb-4">
             <label for="email" class="block text-sm">Email</label>
             <input type="email" id="email" name="email" value="{{ $intern->email }}" required 
-                class="w-full border rounded p-2">
+                class="w-full border rounded p-2 @error('email') border-red-500 @enderror">
+            @error('email')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         {{-- <div class="mb-4">
