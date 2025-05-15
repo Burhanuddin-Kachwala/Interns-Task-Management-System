@@ -56,8 +56,24 @@
 
     // Echo private channel listener for intern
     window.Echo.private(`chat.intern.${internId}`).listen('.NewChatMessage', (event) => {
-        console.log('Admin message received  : Intern Blade'); // Debugging line
+        console.log('Admin message received  : Intern Blade');
+        // Create notification
+        const showNotification = (message) => {
+            const notification = document.createElement('div');
+            notification.classList.add('fixed', 'right-4', 'bottom-10', 'bg-green-100', 'text-gray-600', 'px-3', 'py-1', 'rounded', 'shadow-sm', 'text-sm', 'opacity-90');
+            notification.textContent = 'New message received';
+            document.body.appendChild(notification);
+            
+            // Fade out effect
+            setTimeout(() => {
+            notification.style.transition = 'opacity 0.5s';
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 500);
+            }, 2000);
+        };
 
+    
+        showNotification();
         if (event.message.sender_type === 'admin' && event.message.sender_id === adminId && event.message.receiver_type === 'intern' && event.message.receiver_id === internId) {
             const newMessageHtml = `
                 <div class="flex justify-start">

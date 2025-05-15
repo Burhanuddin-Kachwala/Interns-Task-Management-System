@@ -9,7 +9,6 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Message;
-
 use Log;
 
 class NewChatMessage implements ShouldBroadcast
@@ -40,13 +39,12 @@ class NewChatMessage implements ShouldBroadcast
         return 'NewChatMessage';
     }
 
-   public function broadcastWith(): array
+    public function broadcastWith(): array
     {
         return [
             'message' => $this->message,
             'receiverId' => $this->receiverId,
             'receiverType' => $this->receiverType,
         ];
-    }
- 
+    } 
 }
