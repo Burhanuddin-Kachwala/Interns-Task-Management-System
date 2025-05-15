@@ -7,21 +7,33 @@
         <div class="mb-4">
             <label for="name" class="block text-sm mb-1">Name</label>
             <input type="text" id="name" name="name" required class="w-full border rounded p-2">
+            @error('name')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         <div class="mb-4">
             <label for="email" class="block text-sm mb-1">Email</label>
             <input type="email" id="email" name="email" required class="w-full border rounded p-2">
+             @error('email')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         <div class="mb-4">
             <label for="password" class="block text-sm mb-1">Password</label>
             <input type="password" id="password" name="password" required class="w-full border rounded p-2">
+            @error('password')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         <div class="mb-4">
             <label for="password_confirmation" class="block text-sm mb-1">Confirm Password</label>
             <input type="password" id="password_confirmation" name="password_confirmation" required class="w-full border rounded p-2">
+            @error('password_confirmation')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         {{-- <label class="block text-sm">Role</label>
